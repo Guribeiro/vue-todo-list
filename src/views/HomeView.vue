@@ -14,7 +14,7 @@ export default {
   name: 'home-view',
   components: {
     ButtonPrimary,
-    BaseInput
+    BaseInput,
   },
   setup() {
     const title = ref('')
@@ -61,6 +61,20 @@ export default {
     todosCount() {
       return this.todos.length;
     }
+  },
+
+  watch: {
+    todos() {
+      localStorage.setItem('@todos', JSON.stringify(this.todos))
+    }
+  },
+
+  mounted() {
+    const storagedTodos = localStorage.getItem('@todos')
+
+    if(storagedTodos){
+      this.todos = JSON.parse(storagedTodos);
+    }
   }
 }
 </script>
@@ -73,7 +87,7 @@ export default {
     </header>
     <form @submit.prevent="handleAddTodo">
       <BaseInput id="title" labelText="Todo:" v-model="title" />
-      <ButtonPrimary class="submit-button" text="Buscar" />
+      <ButtonPrimary class="submit-button" text="Add" />
     </form>
 
     <section v-if="todos.length > 0">
@@ -82,8 +96,8 @@ export default {
         <strong>
           {{ todo.title }}
         </strong>
-        <button @click="handleRemoveTodo(todo.id)">
-          <CoTrash />
+        <button @click="handleRemoveTodo(todo.id)" data-tooltip="Click to remove" data-position="top">
+          x
         </button>
       </li>
     </section>
@@ -144,7 +158,7 @@ button {
   background: #e74c3c;
   border: none;
   color: #FFF;
-
+  cursor: pointer;
 }
 
 .submit-button {
