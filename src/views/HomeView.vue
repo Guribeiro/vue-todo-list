@@ -3,10 +3,10 @@
 interface Todo {
   id: string;
   title: string;
+  finished: boolean;
 }
 
 import { ref } from 'vue';
-import { CoTrash } from "oh-vue-icons/icons";
 import ButtonPrimary from '../components/Button.vue';
 import BaseInput from '@/components/BaseInput.vue';
 
@@ -28,6 +28,11 @@ export default {
 
         if (!title.value.length) return;
 
+        if(title.value.length > 60) {
+          window.alert(`Todo title is too long`)
+          return
+        }
+
         const findTodoWithSameTitle = todos.value.find(todo => todo.title === title.value);
 
         if (findTodoWithSameTitle) {
@@ -38,6 +43,7 @@ export default {
         const todo: Todo = {
           id: new Date().valueOf().toString(),
           title: title.value,
+          finished: false,
         }
 
         todos.value = [...todos.value, todo]
@@ -54,6 +60,23 @@ export default {
         todosList.splice(findIndex, 1);
 
         todos.value = todosList;
+      },
+      handleUpdateTodoStatus(id: string) {
+        const findIndex = todos.value.findIndex(todo => todo.id === id);
+
+        if (findIndex < 0) return
+
+        const todosList = [...todos.value];
+
+        const findTodo = todosList[findIndex];
+
+        Object.assign<Todo, Pick<Todo, 'finished'>>(findTodo, {
+          finished: !findTodo.finished
+        })
+
+        todosList[findIndex] = findTodo;
+
+        todos.value = todosList
       }
     }
   },
@@ -64,15 +87,18 @@ export default {
   },
 
   watch: {
-    todos() {
-      localStorage.setItem('@todos', JSON.stringify(this.todos))
-    }
+    todos: {
+      handler() {
+        localStorage.setItem('@todos', JSON.stringify(this.todos))
+      },
+      deep: true
+    },
   },
 
   mounted() {
     const storagedTodos = localStorage.getItem('@todos')
 
-    if(storagedTodos){
+    if (storagedTodos) {
       this.todos = JSON.parse(storagedTodos);
     }
   }
@@ -93,11 +119,14 @@ export default {
     <section v-if="todos.length > 0">
       <h3>Todos</h3>
       <li :key="todo.id" v-for="todo in todos">
-        <strong>
+        <button @click="handleUpdateTodoStatus(todo.id)" data-tooltip="Click to remove" data-position="top">
+          {{ todo.finished ? '✅' : '❌'}}
+        </button>
+        <p>
           {{ todo.title }}
-        </strong>
+        </p>
         <button @click="handleRemoveTodo(todo.id)" data-tooltip="Click to remove" data-position="top">
-          x
+          🚯
         </button>
       </li>
     </section>
@@ -150,17 +179,23 @@ li {
   padding: .8rem;
 }
 
+p {
+
+  line-break: auto;
+}
+
 li+li {
   margin-top: .4rem;
 }
 
 button {
-  background: #e74c3c;
+  background: none;
   border: none;
   color: #FFF;
   cursor: pointer;
+  font-size: 1.2rem;
 }
-
+ 
 .submit-button {
   margin-top: 1rem;
 }
