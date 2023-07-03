@@ -1,32 +1,65 @@
 <script lang="ts">
-import { reactive } from 'vue';
-import ButtonPrimary from '../components/Button.vue';
 
-interface LoginForm {
-  username: string | null;
-  password: string | null
+interface Todo {
+  id: string;
+  title: string;
 }
 
+import { ref } from 'vue';
+import { CoTrash } from "oh-vue-icons/icons";
+import ButtonPrimary from '../components/Button.vue';
+import BaseInput from '@/components/BaseInput.vue';
+
 export default {
-  name: 'Home-',
+  name: 'home-view',
   components: {
     ButtonPrimary,
+    BaseInput
   },
   setup() {
-    const form = reactive<LoginForm>({
-      username: null,
-      password: null,
-    })
+    const title = ref('')
+    const todos = ref<Todo[]>([]);
 
-    return form
+    return {
+      title,
+      todos,
+      handleAddTodo(event: Event) {
+        event.preventDefault()
+
+        if (!title.value.length) return;
+
+        const findTodoWithSameTitle = todos.value.find(todo => todo.title === title.value);
+
+        if (findTodoWithSameTitle) {
+          window.alert(`Todo with title "${title.value}" is already added`)
+          return
+        }
+
+        const todo: Todo = {
+          id: new Date().valueOf().toString(),
+          title: title.value,
+        }
+
+        todos.value = [...todos.value, todo]
+
+        title.value = ''
+      },
+      handleRemoveTodo(id: string) {
+        const findIndex = todos.value.findIndex(todo => todo.id === id);
+
+        if (findIndex < 0) return
+
+        const todosList = [...todos.value];
+
+        todosList.splice(findIndex, 1);
+
+        todos.value = todosList;
+      }
+    }
   },
-
-  methods: {
-    onSubmit() {
-      console.log({
-        username: this.username,
-        password: this.password
-      })
+  computed: {
+    todosCount() {
+      return this.todos.length;
     }
   }
 }
@@ -34,18 +67,26 @@ export default {
 
 <template>
   <main>
-    <h1>Formulário de login</h1>
-    <form @submit.prevent="onSubmit">
-      <label for="username">
-        username
-      </label>
-      <input id="username" v-model="username" type="text">
-      <label for="password">
-        password
-      </label>
-      <input id="password" v-model="password" type="password" >
-      <ButtonPrimary class="submit-button" text="Enviar" />
+    <header>
+      <h1>Todo list</h1>
+      <span>{{ todosCount }}</span>
+    </header>
+    <form @submit.prevent="handleAddTodo">
+      <BaseInput id="title" labelText="Todo:" v-model="title" />
+      <ButtonPrimary class="submit-button" text="Buscar" />
     </form>
+
+    <section v-if="todos.length > 0">
+      <h3>Todos</h3>
+      <li :key="todo.id" v-for="todo in todos">
+        <strong>
+          {{ todo.title }}
+        </strong>
+        <button @click="handleRemoveTodo(todo.id)">
+          <CoTrash />
+        </button>
+      </li>
+    </section>
 
   </main>
 </template>
@@ -53,10 +94,17 @@ export default {
 <style scoped>
 main {
   max-width: 460px;
+  height: 100vh;
   margin: 0 auto;
   width: 100%;
   display: flex;
   flex-direction: column;
+}
+
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 
 h1 {
@@ -65,24 +113,38 @@ h1 {
   font-weight: 500;
 }
 
-
-label {
-  display: block;
-  padding: 4px 0;
+section {
+  margin-top: 2rem;
+  border-top: 1px solid #FFF;
+  padding-top: 1rem;
 }
 
-input {
-  display: block;
-  width: 100%;
+h3 {
+  margin-bottom: .4rem;
+  color: #FFF;
+  font-size: 1.6rem;
+  font-weight: 500;
+}
 
-  padding: 12px;
+li {
+  border: 1px solid #FFF;
   border-radius: 4px;
-
-  border: none;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  padding: .8rem;
 }
 
-input + label {
+li+li {
   margin-top: .4rem;
+}
+
+button {
+  background: #e74c3c;
+  border: none;
+  color: #FFF;
+
 }
 
 .submit-button {
