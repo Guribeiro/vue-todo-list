@@ -15,7 +15,7 @@ export default {
   <div>
     <button>
       <p>{{ props.text }}</p>
-      <img src="../../public/icons/plus.png" alt="">
+      <img src="../../icons/plus.png" alt="">
     </button>
   </div>
 </template>
@@ -24,7 +24,7 @@ export default {
 button {
   border: none;
 
-  background-color: #00796B;
+  background-color: #8284FA;
   padding: .8rem;
   border-radius: 4px;
 
@@ -43,6 +43,6 @@ p {
 }
 
 button:hover {
-  background-color: #00695C;
+  background-color: #7779f7;
 }
 </style>

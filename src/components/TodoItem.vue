@@ -38,7 +38,7 @@ export default {
       </p>
     </div>
     <button @click="onRemove" data-tooltip="Click to remove" data-position="top">
-      <img src="../../public/icons/trash.png" alt="trash-icon">
+      <img src="../../icons/trash.png" alt="trash-icon">
     </button>
   </li>
 </template>
