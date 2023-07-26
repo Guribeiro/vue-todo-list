@@ -15,7 +15,7 @@ export default {
 
 <template>
   <article>
-    <img src="../../icons/Clipboard.svg" alt="empty indicator">
+    <img src="../../public/icons/Clipboard.svg" alt="empty indicator">
     <strong>{{ props.title }}</strong>
     <p>{{ props.subTitle }}</p>
   </article>

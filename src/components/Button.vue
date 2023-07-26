@@ -15,7 +15,7 @@ export default {
   <div>
     <button>
       <p>{{ props.text }}</p>
-      <img src="../../icons/plus.png" alt="">
+      <img src="../../public/icons/plus.png" alt="">
     </button>
   </div>
 </template>
