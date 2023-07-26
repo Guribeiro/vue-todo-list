@@ -123,9 +123,9 @@ export default {
 <template>
   <main>
     <header>
-      <img src="../../public/icons/Logo.svg" alt="">
+      <img src="../../icons/Logo.svg" alt="">
     </header>
-    <article>
+    <article class="container">
       <form @submit.prevent="handleAddTodo">
         <BaseInput id="title" placeholder="Add new todo" v-model="title" />
         <ButtonPrimary class="submit-button" text="Add" />
@@ -139,7 +139,7 @@ export default {
               <span>{{ todosCount }}</span>
             </p>
             <p>
-              finished todos
+              done
               <span>{{ todosFinished }} / {{ todosCount }}</span>
             </p>
           </div>
@@ -150,7 +150,6 @@ export default {
 
         <EmptyIndicator v-else title="You haven't added tasks so far..." subTitle="Add some tasks to your todo list" />
       </section>
-
     </article>
   </main>
 </template>
@@ -169,9 +168,10 @@ header {
   background-color: var(--color-background);
 }
 
-article {
+article.container {
   max-width: 680px;
   margin: 0 auto;
+  padding: 0 1rem;
 }
 
 form {
