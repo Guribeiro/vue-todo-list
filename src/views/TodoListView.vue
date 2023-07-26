@@ -123,7 +123,7 @@ export default {
 <template>
   <main>
     <header>
-      <img src="../../icons/Logo.svg" alt="">
+      <img src="../../public/icons/Logo.svg" alt="">
     </header>
     <article class="container">
       <form @submit.prevent="handleAddTodo">
