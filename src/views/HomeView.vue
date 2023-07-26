@@ -1,6 +1,6 @@
 <script lang="ts">
 
-interface Todo {
+export interface Todo {
   id: string;
   title: string;
   finished: boolean;
@@ -9,12 +9,16 @@ interface Todo {
 import { ref } from 'vue';
 import ButtonPrimary from '../components/Button.vue';
 import BaseInput from '@/components/BaseInput.vue';
+import TodoItem from '@/components/TodoItem.vue';
+import EmptyIndicator from '@/components/EmptyIndicator.vue';
 
 export default {
   name: 'home-view',
   components: {
     ButtonPrimary,
     BaseInput,
+    TodoItem,
+    EmptyIndicator
   },
   setup() {
     const title = ref('')
@@ -28,7 +32,7 @@ export default {
 
         if (!title.value.length) return;
 
-        if(title.value.length > 60) {
+        if (title.value.length > 60) {
           window.alert(`Todo title is too long`)
           return
         }
@@ -51,38 +55,49 @@ export default {
         title.value = ''
       },
       handleRemoveTodo(id: string) {
-        const findIndex = todos.value.findIndex(todo => todo.id === id);
+        const confirmed = window.confirm('You sure you want to remove this task ?')
 
-        if (findIndex < 0) return
+        if (confirmed) {
+          const findIndex = todos.value.findIndex(todo => todo.id === id);
 
-        const todosList = [...todos.value];
+          if (findIndex < 0) return
 
-        todosList.splice(findIndex, 1);
+          const todosList = [...todos.value];
 
-        todos.value = todosList;
+          todosList.splice(findIndex, 1);
+
+          todos.value = todosList;
+        }
       },
       handleUpdateTodoStatus(id: string) {
-        const findIndex = todos.value.findIndex(todo => todo.id === id);
+        const confimed = window.confirm('You sure you want to update its status ?')
 
-        if (findIndex < 0) return
+        if (confimed) {
+          const findIndex = todos.value.findIndex(todo => todo.id === id);
 
-        const todosList = [...todos.value];
+          if (findIndex < 0) return
 
-        const findTodo = todosList[findIndex];
+          const todosList = [...todos.value];
 
-        Object.assign<Todo, Pick<Todo, 'finished'>>(findTodo, {
-          finished: !findTodo.finished
-        })
+          const findTodo = todosList[findIndex];
 
-        todosList[findIndex] = findTodo;
+          Object.assign<Todo, Pick<Todo, 'finished'>>(findTodo, {
+            finished: !findTodo.finished
+          })
 
-        todos.value = todosList
+          todosList[findIndex] = findTodo;
+
+          todos.value = todosList
+        }
       }
     }
   },
   computed: {
     todosCount() {
       return this.todos.length;
+    },
+    todosFinished() {
+      return this.todos.filter(todo => todo.finished).length
     }
   },
 
@@ -108,47 +123,64 @@ export default {
 <template>
   <main>
     <header>
-      <h1>Todo list</h1>
-      <span>{{ todosCount }}</span>
+      <img src="../../public/icons/Logo.svg" alt="">
     </header>
-    <form @submit.prevent="handleAddTodo">
-      <BaseInput id="title" labelText="Todo:" v-model="title" />
-      <ButtonPrimary class="submit-button" text="Add" />
-    </form>
+    <article>
+      <form @submit.prevent="handleAddTodo">
+        <BaseInput id="title" placeholder="Add new todo" v-model="title" />
+        <ButtonPrimary class="submit-button" text="Add" />
+      </form>
 
-    <section v-if="todos.length > 0">
-      <h3>Todos</h3>
-      <li :key="todo.id" v-for="todo in todos">
-        <button @click="handleUpdateTodoStatus(todo.id)" data-tooltip="Click to remove" data-position="top">
-          {{ todo.finished ? '✅' : '❌'}}
-        </button>
-        <p>
-          {{ todo.title }}
-        </p>
-        <button @click="handleRemoveTodo(todo.id)" data-tooltip="Click to remove" data-position="top">
-          🚯
-        </button>
-      </li>
-    </section>
+      <section>
+        <article v-if="todos.length > 0">
+          <div class="todos-list-header">
+            <p>
+              all todos
+              <span>{{ todosCount }}</span>
+            </p>
+            <p>
+              finished todos
+              <span>{{ todosFinished }} / {{ todosCount }}</span>
+            </p>
+          </div>
+          <h3>Todos</h3>
+          <TodoItem :key="todo.id" v-for="todo in todos" :todo="todo" @onUpdateStatus="handleUpdateTodoStatus(todo.id)"
+            @onRemove="handleRemoveTodo(todo.id)" />
+        </article>
 
+        <EmptyIndicator v-else title="You haven't added tasks so far..." subTitle="Add some tasks to your todo list" />
+      </section>
+
+    </article>
   </main>
 </template>
 
 <style scoped>
 main {
-  max-width: 460px;
-  height: 100vh;
-  margin: 0 auto;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
+  background-color: var(--vt-c-divider-light-2);
+  min-height: 100vh;
 }
 
 header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
+  height: 12.5rem;
+  background-color: var(--color-background);
 }
+
+article {
+  max-width: 680px;
+  margin: 0 auto;
+}
+
+form {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -1.5rem;
+}
+
 
 h1 {
   text-align: center;
@@ -157,9 +189,26 @@ h1 {
 }
 
 section {
-  margin-top: 2rem;
-  border-top: 1px solid #FFF;
-  padding-top: 1rem;
+  margin-top: 3.4rem;
+}
+
+.todos-list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.todos-list-header p {
+  color: #8284FA;
+  font-weight: 500;
+}
+
+.todos-list-header span {
+  padding: .2rem .4rem;
+  font-size: .8rem;
+  background-color: var(--vt-c-divider-dark-1);
+  border-radius: .4rem;
+  color: var(--vt-c-white);
 }
 
 h3 {
@@ -169,34 +218,7 @@ h3 {
   font-weight: 500;
 }
 
-li {
-  border: 1px solid #FFF;
-  border-radius: 4px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 100%;
-  padding: .8rem;
-}
-
-p {
-
-  line-break: auto;
-}
-
-li+li {
-  margin-top: .4rem;
-}
-
-button {
-  background: none;
-  border: none;
-  color: #FFF;
-  cursor: pointer;
-  font-size: 1.2rem;
-}
- 
 .submit-button {
-  margin-top: 1rem;
+  margin-left: .6rem;
 }
 </style>

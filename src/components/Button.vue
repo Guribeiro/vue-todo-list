@@ -13,23 +13,33 @@ export default {
 
 <template>
   <div>
-    <button>{{ props.text }}</button>
+    <button>
+      <p>{{ props.text }}</p>
+      <img src="../../public/icons/plus.png" alt="">
+    </button>
   </div>
 </template>
 
 <style scoped>
 button {
   border: none;
-  width: 100%;
 
   background-color: #00796B;
   padding: .8rem;
   border-radius: 4px;
 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
   color: #FFF;
-  font-size: 1rem;
+  font-size: .8rem;
   transition: 300ms;
   cursor: pointer;
+}
+
+p {
+  margin-right: 1rem;
 }
 
 button:hover {
