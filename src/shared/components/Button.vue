@@ -15,7 +15,6 @@ export default {
   <div>
     <button>
       <p>{{ props.text }}</p>
-      <img src="../../public/icons/plus.png" alt="">
     </button>
   </div>
 </template>
@@ -37,11 +36,7 @@ button {
   transition: 300ms;
   cursor: pointer;
 }
-
-p {
-  margin-right: 1rem;
-}
-
+ 
 button:hover {
   background-color: #7779f7;
 }

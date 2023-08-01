@@ -6,11 +6,11 @@ export interface Todo {
   finished: boolean;
 }
 
-import { ref } from 'vue';
-import ButtonPrimary from '../components/Button.vue';
-import BaseInput from '@/components/BaseInput.vue';
-import TodoItem from '@/components/TodoItem.vue';
-import EmptyIndicator from '@/components/EmptyIndicator.vue';
+import { TransitionGroup, ref } from 'vue';
+import ButtonPrimary from '@/shared/components/Button.vue';
+import BaseInput from '@/shared/components/BaseInput.vue';
+import EmptyIndicator from '@/shared/components/EmptyIndicator.vue';
+import TodoItem from '@/modules/todo-list/components/TodoItem.vue';
 
 export default {
   name: 'home-view',
@@ -18,7 +18,8 @@ export default {
     ButtonPrimary,
     BaseInput,
     TodoItem,
-    EmptyIndicator
+    EmptyIndicator,
+    TransitionGroup
   },
   setup() {
     const title = ref('')
@@ -123,7 +124,7 @@ export default {
 <template>
   <main>
     <header>
-      <img src="../../public/icons/Logo.svg" alt="">
+      <img src="../assets/Logo.svg" alt="Todo list">
     </header>
     <article class="container">
       <form @submit.prevent="handleAddTodo">
@@ -144,11 +145,14 @@ export default {
             </p>
           </div>
           <h3>Todos</h3>
-          <TodoItem :key="todo.id" v-for="todo in todos" :todo="todo" @onUpdateStatus="handleUpdateTodoStatus(todo.id)"
-            @onRemove="handleRemoveTodo(todo.id)" />
+          <TransitionGroup tag="ul" name="todos-list" appear>
+            <TodoItem :key="todo.id" v-for="todo in todos" :todo="todo" @onUpdateStatus="handleUpdateTodoStatus(todo.id)"
+              @onRemove="handleRemoveTodo(todo.id)" />
+          </TransitionGroup>
         </article>
 
-        <EmptyIndicator v-else title="You haven't added tasks so far..." subTitle="Add some tasks to your todo list" />
+        <EmptyIndicator v-else title="You haven't added tasks so far..." subTitle="Add some tasks to your todo list"
+          img-src="../../../shared/assets/Clipboard.svg" />
       </section>
     </article>
   </main>
@@ -218,7 +222,41 @@ h3 {
   font-weight: 500;
 }
 
+ul {
+  padding: 0;
+  position: relative;
+}
+
 .submit-button {
   margin-left: .6rem;
+}
+
+.todos-list-enter-from {
+  opacity: 0;
+  transform: scale(.6);
+}
+.todos-list-enter-to {
+  opacity: 1;
+  transform: scale(1);
+}
+.todos-list-enter-active {
+  transition: all .4s ease;
+}
+
+.todos-list-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+.todos-list-leave-to {
+  opacity: 0;
+  transform: translateX(15px);
+}
+.todos-list-leave-active {
+  transition: all .1s ease;
+  position: absolute;
+}
+
+.todos-list-move {
+  transition: all .3s ease;
 }
 </style>

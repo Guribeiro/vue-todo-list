@@ -3,7 +3,11 @@ import {createRouter, createWebHistory} from 'vue-router';
 const routes = [
   {
     path: '/',
-    component: () => import('@/views/TodoListView.vue'),
+    component: () => import('@/modules/todo-list/views/TodoListView.vue'),
+  },
+  {
+    path: '/github-user-finder',
+    component: () => import('@/modules/github-user-finder/views/GithubUserSearcher.vue'),
   },
 ]
 

@@ -2,7 +2,8 @@
 
 interface Props {
   title: String;
-  subTitle: String
+  subTitle: String | undefined
+  imgSrc: string | undefined
 }
 const props = defineProps<Props>()
 </script>
@@ -15,9 +16,9 @@ export default {
 
 <template>
   <article>
-    <img src="../../public/icons/Clipboard.svg" alt="empty indicator">
+    <img :if="props.imgSrc" :src="props.imgSrc" alt="empty indicator">
     <strong>{{ props.title }}</strong>
-    <p>{{ props.subTitle }}</p>
+    <p :if="props.subTitle" >{{ props.subTitle }}</p>
   </article>
 </template>
 
