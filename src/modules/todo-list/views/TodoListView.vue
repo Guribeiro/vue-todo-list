@@ -151,8 +151,9 @@ export default {
           </TransitionGroup>
         </article>
 
-        <EmptyIndicator v-else title="You haven't added tasks so far..." subTitle="Add some tasks to your todo list"
-          img-src="../../../shared/assets/Clipboard.svg" />
+        <Transition v-else name="empty-indicator" appear>
+          <EmptyIndicator title="You haven't added tasks so far..." subTitle="Add some tasks to your todo list" />
+        </Transition>
       </section>
     </article>
   </main>
@@ -258,5 +259,31 @@ ul {
 
 .todos-list-move {
   transition: all .3s ease;
+}
+
+.empty-indicator-enter-from {
+  opacity: 0;
+  transform: scale(.6);
+}
+.empty-indicator-enter-to {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.empty-indicator-enter-active {
+  transition: all .4s ease;
+}
+
+.empty-indicator-leave-from {
+  opacity: 1;
+  transform: scale(1);
+}
+.empty-indicator-leave-to {
+  opacity: 0;
+  transform: translateX(15px);
+}
+.empty-indicator-leave-active {
+  transition: all .1s ease;
+  position: absolute;
 }
 </style>
