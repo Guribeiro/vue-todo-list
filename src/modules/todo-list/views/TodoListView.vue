@@ -13,7 +13,7 @@ import EmptyIndicator from '@/shared/components/EmptyIndicator.vue';
 import TodoItem from '@/modules/todo-list/components/TodoItem.vue';
 
 export default {
-  name: 'home-view',
+  name: 'todo-list-view',
   components: {
     ButtonPrimary,
     BaseInput,
@@ -71,9 +71,9 @@ export default {
         }
       },
       handleUpdateTodoStatus(id: string) {
-        const confimed = window.confirm('You sure you want to update its status ?')
+        const confirmed = window.confirm('You sure you want to update its status ?')
 
-        if (confimed) {
+        if (confirmed) {
           const findIndex = todos.value.findIndex(todo => todo.id === id);
 
           if (findIndex < 0) return

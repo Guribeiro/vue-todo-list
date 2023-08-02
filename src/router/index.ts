@@ -3,6 +3,10 @@ import {createRouter, createWebHistory} from 'vue-router';
 const routes = [
   {
     path: '/',
+    component: () => import('@/modules/home/views/HomeView.vue'),
+  },
+  {
+    path: '/todo-list',
     component: () => import('@/modules/todo-list/views/TodoListView.vue'),
   },
   {
