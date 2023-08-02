@@ -1,7 +1,3 @@
-<template>
-  <input :id="id" :value="modelValue" :placeholder="placeholder" @change="$emit('update:modelValue', ($event.target as HTMLInputElement).value)" />
-</template>
-
 <script lang="ts">
 export default {
   name: 'base-input',
@@ -12,6 +8,10 @@ export default {
   },
 };
 </script>
+
+<template>
+  <input :id="id" :value="modelValue" :placeholder="placeholder" @change="$emit('update:modelValue', ($event.target as HTMLInputElement).value)" />
+</template>
 
 <style scoped> 
  input {

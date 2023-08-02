@@ -11,6 +11,7 @@ import ButtonPrimary from '@/shared/components/Button.vue';
 import BaseInput from '@/shared/components/BaseInput.vue';
 import EmptyIndicator from '@/shared/components/EmptyIndicator.vue';
 import TodoItem from '@/modules/todo-list/components/TodoItem.vue';
+import Toast, { type IToastProps } from '@/shared/components/Toast.vue';
 
 export default {
   name: 'todo-list-view',
@@ -19,41 +20,55 @@ export default {
     BaseInput,
     TodoItem,
     EmptyIndicator,
-    TransitionGroup
+    TransitionGroup,
+    Toast
   },
   setup() {
     const title = ref('')
     const todos = ref<Todo[]>([]);
+    const toast = ref<IToastProps | undefined>()
 
     return {
       title,
       todos,
+      toast,
       handleAddTodo(event: Event) {
-        event.preventDefault()
+        try {
+          event.preventDefault()
 
-        if (!title.value.length) return;
+          if (!title.value.length) {
+            throw new Error('Todo title is too small')
+          }
 
-        if (title.value.length > 60) {
-          window.alert(`Todo title is too long`)
-          return
+          if (title.value.length > 60) {
+            throw new Error('Todo title is too long')
+          }
+
+          const findTodoWithSameTitle = todos.value.find(todo => todo.title === title.value);
+
+          if (findTodoWithSameTitle) {
+            throw new Error(`Todo with title "${title.value}" is already added`)
+          }
+
+          const todo: Todo = {
+            id: new Date().valueOf().toString(),
+            title: title.value,
+            finished: false,
+          }
+
+          todos.value = [...todos.value, todo]
+
+          title.value = ''
+        } catch (error) {
+          const err = error as { message: string }
+          toast.value = {
+            title: 'Error',
+            type: 'error',
+            description: err.message
+          }
+
+          setTimeout(() => toast.value = undefined, 1000)
         }
-
-        const findTodoWithSameTitle = todos.value.find(todo => todo.title === title.value);
-
-        if (findTodoWithSameTitle) {
-          window.alert(`Todo with title "${title.value}" is already added`)
-          return
-        }
-
-        const todo: Todo = {
-          id: new Date().valueOf().toString(),
-          title: title.value,
-          finished: false,
-        }
-
-        todos.value = [...todos.value, todo]
-
-        title.value = ''
       },
       handleRemoveTodo(id: string) {
         const confirmed = window.confirm('You sure you want to remove this task ?')
@@ -90,6 +105,9 @@ export default {
 
           todos.value = todosList
         }
+      },
+      handleCloseToast(){
+        toast.value = undefined
       }
     }
   },
@@ -126,6 +144,7 @@ export default {
     <header>
       <img src="../assets/Logo.svg" alt="Todo list">
     </header>
+
     <article class="container">
       <form @submit.prevent="handleAddTodo">
         <BaseInput id="title" placeholder="Add new todo" v-model="title" />
@@ -156,6 +175,9 @@ export default {
         </Transition>
       </section>
     </article>
+    <Transition name="toast">
+      <Toast v-if="toast" :toast="toast" :onClose="handleCloseToast" />
+    </Transition>
   </main>
 </template>
 
@@ -236,10 +258,12 @@ ul {
   opacity: 0;
   transform: scale(.6);
 }
+
 .todos-list-enter-to {
   opacity: 1;
   transform: scale(1);
 }
+
 .todos-list-enter-active {
   transition: all .4s ease;
 }
@@ -248,10 +272,12 @@ ul {
   opacity: 1;
   transform: scale(1);
 }
+
 .todos-list-leave-to {
   opacity: 0;
   transform: translateX(15px);
 }
+
 .todos-list-leave-active {
   transition: all .1s ease;
   position: absolute;
@@ -265,6 +291,7 @@ ul {
   opacity: 0;
   transform: scale(.6);
 }
+
 .empty-indicator-enter-to {
   opacity: 1;
   transform: scale(1);
@@ -278,12 +305,41 @@ ul {
   opacity: 1;
   transform: scale(1);
 }
+
 .empty-indicator-leave-to {
   opacity: 0;
   transform: translateX(15px);
 }
+
 .empty-indicator-leave-active {
   transition: all .1s ease;
   position: absolute;
+}
+
+.toast-enter-from {
+  opacity: 0;
+  transform: translateY(4rem);
+}
+
+.toast-enter-to {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-enter-active {
+  transition: all .3s ease;
+}
+.toast-leave-from {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-leave-to {
+  opacity: 0;
+  transform: translateY(4rem);
+}
+
+.toast-leave-active {
+  transition: all .3s ease;
 }
 </style>
