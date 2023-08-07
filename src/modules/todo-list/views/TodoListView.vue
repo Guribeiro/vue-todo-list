@@ -106,7 +106,7 @@ export default {
           todos.value = todosList
         }
       },
-      handleCloseToast(){
+      handleCloseToast() {
         toast.value = undefined
       }
     }
@@ -119,7 +119,6 @@ export default {
       return this.todos.filter(todo => todo.finished).length
     }
   },
-
   watch: {
     todos: {
       handler() {
@@ -329,6 +328,7 @@ ul {
 .toast-enter-active {
   transition: all .3s ease;
 }
+
 .toast-leave-from {
   opacity: 1;
   transform: translateY(0);
@@ -340,6 +340,6 @@ ul {
 }
 
 .toast-leave-active {
-  transition: all .3s ease;
+  transition: all 1s ease;
 }
 </style>

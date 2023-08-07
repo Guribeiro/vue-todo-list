@@ -32,7 +32,7 @@ import EmptyIndicator from '@/shared/components/EmptyIndicator.vue';
 import Toast, { type IToastProps } from '@/shared/components/Toast.vue';
 
 export default {
-  name: 'home-view',
+  name: 'github-user-search-view',
   components: {
     ButtonPrimary,
     BaseInput,
@@ -57,12 +57,11 @@ export default {
 
           if (!username.value.length) {
             user.value = undefined
-            return;
+            throw new Error('Fill the blank search input')
           }
 
           if (username.value.length > 60) {
-            window.alert(`Todo username is too long`)
-            return
+            throw new Error('Username is too long')
           }
 
           const { data } = await github.get(`/${username.value}`)

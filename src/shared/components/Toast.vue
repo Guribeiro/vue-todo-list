@@ -25,7 +25,7 @@ export default {
 
 <template>
   <div class="toast-wrapper">
-    <article v-if="props.toast" class="toast">
+    <article v-if="props.toast" :class="['toast', props.toast.type]">
       <div>
         <h1>{{ props.toast.title }}</h1>
         <p>{{ props.toast.description }}</p>
@@ -47,7 +47,6 @@ export default {
    .toast {
      padding: 20px;
      color: white;
-     background: brown;
      border-radius: 1rem;
      box-shadow: 1px 3px 5px rgba(0, 0, 0, 0.2);
      max-width: 30rem;
@@ -55,6 +54,16 @@ export default {
      align-items: start;
      justify-content: space-between;
      margin: 0 auto;
+   }
+
+   .toast.error {
+    background: brown;
+   }
+   .toast.success {
+    background: rgb(46, 133, 46);
+   }
+   .toast.warning {
+    background: #ff9f43;
    }
 
    .toast > button {
